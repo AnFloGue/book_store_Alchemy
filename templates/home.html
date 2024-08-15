@@ -12,13 +12,24 @@
             <option value="author">Sort by Author</option>
         </select>
     </form>
-    {% for book in books %}
-    <div>
-        <h3>{{ book.title }} by {{ book.author.name }}</h3>
-        {% if book.cover_url %}
-        <img src="{{ book.cover_url }}" alt="Cover image of {{ book.title }}">
-        {% endif %}
-    </div>
-    {% endfor %}
+    <form method="get" action="/">
+        <input type="text" name="search_query" placeholder="Search for a book">
+        <button type="submit">Search</button>
+    </form>
+    {% if books %}
+        {% for book in books %}
+        <div>
+            <h3>{{ book.title }} by {{ book.author.name }}</h3>
+            {% if book.cover_url %}
+            <img src="{{ book.cover_url }}" alt="Cover image of {{ book.title }}">
+            {% endif %}
+            <form method="post" action="{{ url_for('delete_book', book_id=book.id) }}">
+                <button type="submit">Delete Book</button>
+            </form>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No books found matching your search criteria.</p>
+    {% endif %}
 </body>
 </html>
