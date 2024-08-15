@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  </head>
-  <body>
-
+    <title>Library Home</title>
+</head>
+<body>
+    <form method="get" action="/">
+        <select name="sort_by" onchange="this.form.submit()">
+            <option value="title">Sort by Title</option>
+            <option value="author">Sort by Author</option>
+        </select>
+    </form>
     {% for book in books %}
-    <div> <h3>{{ book.title }}</h3>
+    <div>
+        <h3>{{ book.title }} by {{ book.author.name }}</h3>
+        {% if book.cover_url %}
+        <img src="{{ book.cover_url }}" alt="Cover image of {{ book.title }}">
+        {% endif %}
     </div>
     {% endfor %}
-
-  </body>
+</body>
 </html>

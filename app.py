@@ -17,8 +17,25 @@ print("Configured SQLALCHEMY_DATABASE_URI")
 
 with app.app_context():
     db.init_app(app)
-    db.create_all()  
-    
+    # db.create_all()
+
+def get_book_cover(isbn):
+    response = requests.get(f'https://api.example.com/book/{isbn}/cover')
+    if response.status_code == 200:
+        return response.json().get('cover_url')
+    return None
+
+@app.route('/', methods=['GET'])
+def home():
+    sort_by = request.args.get('sort_by', 'title')
+    if sort_by == 'author':
+        books = Book.query.join(Author).order_by(Author.name).all()
+    else:
+        books = Book.query.order_by(Book.title).all()
+    for book in books:
+        book.cover_url = get_book_cover(book.isbn)
+    return render_template('home.html', books=books)
+
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
     if request.method == 'POST':
@@ -43,7 +60,5 @@ def add_book():
         return redirect(url_for('add_book'))
     return render_template('add_book.html', authors=authors)
 
-@app.route('/')
-def home():
-    books = Book.query.all()
-    return render_template('home.html', books=books)
+if __name__ == '__main__':
+    app.run(debug=True)
